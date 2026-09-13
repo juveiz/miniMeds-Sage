@@ -6489,7 +6489,7 @@ packages:
   - numpy
   - matplotlib
   - pytest
-  - ruff
+  - ruff>=0.16.6,<0.17
   requires_python: '>=3.11'
 - pypi: https://files.pythonhosted.org/packages/8b/98/083d8b4ef3c51a0d19db84367791cbe9f44e4b53343d19dfa83556e1cd9a/ruff-0.16.6-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
   name: ruff
