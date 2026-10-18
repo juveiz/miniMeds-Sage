@@ -45,6 +45,7 @@ class Tensor:
 
     def __repr__(self) -> str:
         return f"Tensor(n={self.n}, over GF({self.field.q}))"
+
     def slice(self, a: Integer) -> Matrix:
         return self.slices[a]
 
