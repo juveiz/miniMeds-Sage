@@ -17,6 +17,13 @@ platforms = ["linux-64"]
 minimeds_sage = { path = ".", editable = true }
 
 [tool.pixi.tasks]
+fmt = "ruff format src tests scripts"
+fmt-check = "ruff format --check src tests scripts"
+lint = "ruff check src tests scripts"
+lint-fix = "ruff check --fix src tests scripts"
+test = "pytest tests"
+demo = "python scripts/demo_keygen.py"
+check = { depends-on = ["fmt-check", "lint", "test"] }
 
 [tool.pixi.dependencies]
 sage = ">=10.9,<11"
