@@ -1,9 +1,9 @@
-from sage.all import identity_matrix, vector
+from sage.all import identity_matrix, matrix, vector
 
 
 def _naive_contract(T, axis, v):
     n = T.n
-    R = T.field.zero_matrix(n, n)
+    R = matrix(T.F, n, n)
     for a in range(n):
         for j in range(n):
             for k in range(n):
@@ -18,18 +18,18 @@ def _naive_contract(T, axis, v):
 
 def test_contract_matches_definition(space):
     T = space.random_tensor()
-    v = [space.field.random_element() for _ in range(space.n)]
+    v = [space.F.random_element() for _ in range(space.n)]
     for axis in range(3):
         assert T.contract_axis(axis, v) == _naive_contract(T, axis, v)
 
 
 def test_contract_accepts_vector(space):
     T = space.random_tensor()
-    v = [space.field.random_element() for _ in range(space.n)]
-    assert T.contract_axis(1, vector(space.field.F, v)) == T.contract_axis(1, v)
+    v = [space.F.random_element() for _ in range(space.n)]
+    assert T.contract_axis(1, vector(space.F, v)) == T.contract_axis(1, v)
 
 
 def test_transform_identity(space):
     T = space.random_tensor()
-    I = identity_matrix(space.field.F, space.n)
+    I = identity_matrix(space.F, space.n)
     assert T.transform(I, I, I) == T

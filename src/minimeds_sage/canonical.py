@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 def corank1_point(T: Tensor) -> list[FieldElement]:
     """Rejection-sample u until T(u, -, -) has rank n - 1."""
     while True:
-        u = [T.field.random_element() for _ in range(T.n)]
+        u = [T.F.random_element() for _ in range(T.n)]
         if T.contract_axis(0, u).rank() == T.n - 1:
             return u
 
@@ -31,7 +31,7 @@ def corank1_walk(
     check_span: bool = True,
 ) -> tuple[Matrix, Matrix, Matrix] | None:
     """Walk u -> v -> w -> u' via 1-dim kernels; return (U, V, W) column matrices or None."""
-    F = T.field.F
+    F = T.F
     n = T.n if steps is None else steps
     u_i = vector(F, u)
 
@@ -75,7 +75,7 @@ def corank1_walk(
 
 def scale(T: Tensor) -> tuple[Matrix, Matrix, Matrix] | None:
     """Diagonal scaling (f, g, h) normalising fixed entries of T; None if a pivot is 0 or n < 5."""
-    F = T.field.F
+    F = T.F
     l = T.n
     if l < 5:
         return None
@@ -116,3 +116,22 @@ def scale(T: Tensor) -> tuple[Matrix, Matrix, Matrix] | None:
         diagonal_matrix(F, g),
         diagonal_matrix(F, h),
     )
+
+
+def ecanon(T: Tensor, u, l: int, check_span: bool = False):
+    """Alg 5: Ecanon(T, u) -> ((LU·F, LV·G, LW·H), T_C) or None.
+
+    check_span=False matches the C reference, which omits the span checks of
+    Alg 6 (lines 5, 8, 13); Scale rejects the degenerate cases. Use True for
+    the paper-literal walk.
+    """
+    walk = corank1_walk(T, u, steps=l, check_span=check_span)
+    if walk is None:
+        return None
+    R = T.transform(*walk)
+    fgh = scale(R)
+    if fgh is None:
+        return None
+    LU, LV, LW = walk
+    F, G, H = fgh
+    return (LU * F, LV * G, LW * H), R.transform(*fgh)

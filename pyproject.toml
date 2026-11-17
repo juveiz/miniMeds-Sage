@@ -27,3 +27,4 @@ check = { depends-on = ["fmt-check", "lint", "test"] }
 
 [tool.pixi.dependencies]
 sage = ">=10.9,<11"
+pytest = ">=9.2.0,<10"

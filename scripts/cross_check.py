@@ -41,17 +41,16 @@ from minimeds_sage import Tensor, TensorSpace, corank1_point, corank1_walk, scal
 # LEVEL -> (q, n, l); must match ref/config.h of the compiled cross_test
 LEVELS = {0: (101, 6, 5), 1: (4093, 25, 9), 3: (4093, 34, 11), 5: (4093, 44, 12)}
 
+
 def flat(T: Tensor) -> list[int]:
     n = T.n
-    return [
-        int(T.entry(a, b, c)) for a in range(n) for b in range(n) for c in range(n)
-    ]
+    return [int(T.entry(a, b, c)) for a in range(n) for b in range(n) for c in range(n)]
 
 
 def from_flat(space: TensorSpace, vals: list[int]) -> Tensor:
-    n, F = space.n, space.field.F
+    n, F = space.n, space.F
     slices = [matrix(F, n, n, vals[a * n * n : (a + 1) * n * n]) for a in range(n)]
-    return Tensor(space.field, n, slices)
+    return Tensor(F, n, slices)
 
 
 def write_ints(path: Path, *chunks: list[int]) -> None:
@@ -95,7 +94,7 @@ def gen(args, dirpath: Path) -> None:
 def check(args, dirpath: Path) -> list[str]:
     q, n, l = LEVELS[args.level]
     space, lspace = TensorSpace(q, n), TensorSpace(q, l)
-    F = space.field.F
+    F = space.F
     errors: list[str] = []
 
     # ---- walk mode: Corank1Walk -> transform -> Scale -> transform ----
